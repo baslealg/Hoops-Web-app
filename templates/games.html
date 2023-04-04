@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Hoops{% endblock %}
+
+{% block body %}
+    <div>
+        <h1>insert Google maps here</h1>
+    </div>
+    <div>
+        <h2>Games in your area </h2>
+        <ul>
+            {% for game in games %}
+              <li>Game Title: {{ game.game_title }}</li>
+                <ul>
+                  <li>Game Time: {{ game.date_time.strftime("%A, %b %d  %I:%M%p") }}</li>
+                  <li>Max players: {{ game.max_players }}</li>
+                  <li>Hosted by: {{ game.user.username }}</li>
+                  <li>Location: {{ game.location.address}}</li>
+                  <li><button>Join Game</button></li>
+                </ul>
+            {% endfor %}
+          </ul>
+    </div>
+
+
+
+{% endblock %}
