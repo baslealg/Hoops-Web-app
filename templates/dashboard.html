@@ -6,4 +6,18 @@
     <div>
         <h2>Dashboard</h2>
     </div>
+    <div>
+        <button>create a game</button>
+    </div>
+    <div>
+        <h2>current games your in</h2>
+        <ul>
+            {% for game in user.games %}
+              <li>Game Title: {{ game.game_title }} Hosted by you</li>
+                <ul>
+                  <li>Game Time: {{ user.game.date_time.strftime("%A, %b %d  %I:%M%p") }}</li>
+                  <li>Max players: {{game.max_players }}</li>
+                  <li>Hosted by: {{ game.user.username }}</li>
+                  <li>Location: {{ game.location.address}}</li>
+    </div>
 {% endblock %}

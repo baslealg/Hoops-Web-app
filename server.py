@@ -25,7 +25,12 @@ def games_page():
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
-        return "Account created successfully!"
+        username = request.form['username']
+        password = request.form['password']
+        user =crud.create_user(username=username, password=password)
+        # session['logged_in_user'] = current_user
+        # alert = "Account created successfully!"
+        return redirect('/dashboard', user=user)
     else:
         return render_template('create_account.html')
 
@@ -33,18 +38,15 @@ def create_account():
 def login():
     error = ''
     if request.method == 'POST':
-        # Get the user's email and password from the form data
         username = request.form['username']
         password = request.form['password']
 
-        # Query the database for a user with matching email and password
         user = model.User.query.filter_by(username=username, password=password).first()
 
         if user:
-            
-            return redirect('/dashboard')
+            # session['logged_in_user'] = user
+            return redirect('/dashboard', user=user)
         else:
-            # If no matching user is found, display an error message
             error = "Incorrect email or password. Please try again."
 
 
