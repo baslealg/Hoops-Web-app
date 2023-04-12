@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block title %}Hoops{% endblock %}
-
+{% block head %}
+<link rel="stylesheet" href="/static/css/map.css"/>
+{% endblock %}
 {% block body %}
     <div>
         <h1>insert Google maps here</h1>
@@ -13,15 +15,25 @@
               <li>Game Title: {{ game.game_title }}</li>
                 <ul>
                   <li>Game Time: {{ game.date_time.strftime("%A, %b %d  %I:%M%p") }}</li>
-                  <li>Max players: {{ game.max_players }}</li>
+                  <li>Max players: {{ game.max_players }} / {{ games_num_players[game.game_id]}}</li>
                   <li>Hosted by: {{ game.user.username }}</li>
+                  <li>{{ games_num_players}}</li>
                   <li>Location: {{ game.location.address}}</li>
-                  <li><button>Join Game</button></li>
+                  <li>
+                    <button> 
+                      <a href="{{ url_for('join_game', game_id=game.game_id) }}">Join Game </a>
+                    </button>
+                  </li>
                 </ul>
             {% endfor %}
           </ul>
     </div>
 
-
+    <div id="games-map"> </div>
+    <script src="/static/js/games_map.js"></script>
+    <script
+      async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvoBvzdSj6ArBejaad94f7ibiV5L3BNqE&callback=initMap">
+    </script>
 
 {% endblock %}

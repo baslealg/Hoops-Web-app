@@ -1,5 +1,5 @@
 from model import db, User, Location, Game, Usergame, connect_to_db
-
+from flask import jsonify
 
 def create_user(username, password):
     """Create and return a new user."""
@@ -15,7 +15,8 @@ def create_game(game_title, date_time, max_players, user):
     """Create and return a new game."""
 
     game = Game(game_title=game_title, date_time=date_time, max_players=max_players, user=user)
-
+    db.session.add(game)
+    db.session.commit()
 
     return game
 
@@ -26,15 +27,24 @@ def get_games():
 
 def create_usergame(game, user):
     """Create and return a new usergame."""
-    usergame = Usergame(game=game, user=user)
-
-    return usergame
+    usergame_check = Usergame.query.filter_by(game=game, user=user).first()
+    if usergame_check == None:
+        usergame = Usergame(game=game, user=user)
+        db.session.add(usergame)
+        db.session.commit()
+        return usergame
 
 def create_location(game, address, latitude, longitude):
     """Create and return a location."""
     location = Location(game=game, address=address, latitude=latitude, longitude=longitude)
 
     return location
+
+
+def get_num_players(game_id):
+    num_players = db.session.query(Usergame).filter_by(game_id=game_id).count()
+    return num_players
+
 
 if __name__ == '__main__':
     from server import app

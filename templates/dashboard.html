@@ -7,17 +7,34 @@
         <h2>Dashboard</h2>
     </div>
     <div>
-        <button>create a game</button>
+        <a href="/create_game">
+            <button>create a game</button>
+        </a>
     </div>
     <div>
-        <h2>current games your in</h2>
-        <ul>
-            {% for game in user.games %}
-              <li>Game Title: {{ game.game_title }} Hosted by you</li>
-                <ul>
-                  <li>Game Time: {{ user.game.date_time.strftime("%A, %b %d  %I:%M%p") }}</li>
-                  <li>Max players: {{game.max_players }}</li>
-                  <li>Hosted by: {{ game.user.username }}</li>
-                  <li>Location: {{ game.location.address}}</li>
+        <h2>current games your in </h2>
+        {% if user.usergames %}
+            <ul>
+                {% for usergame in user.usergames %}
+                <li>Game Title: {{ usergame.game.game_title }}</li>
+                    <ul>
+                    <li>Game Time: {{usergame.game.date_time.strftime("%A, %b %d  %I:%M%p") }}</li>
+                    <li>Max players: {{usergame.game.max_players }}</li>
+                    {% if usergame.game.host_id == usergame.user.user_id %}
+                    <li>Hosted by: You</li>
+                    {% else %}
+                    <li>Hosted by: {{usergame.game.user.username}}</li>
+                    {% endif %}
+                    <li>Location: {{ usergame.game.location.address}}</li>
+                    </ul>
+                {% endfor %}
+        {% else %}
+                <p>you are not in any games at the moment</p>
+        {% endif %}
+    </div>
+    <div>
+        <a href="/games">
+            <button> search for games</button>
+        </a>
     </div>
 {% endblock %}

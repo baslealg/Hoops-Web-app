@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title %}Hoops{% endblock %}
-
+{% block head %}
+<link rel="stylesheet" href="/static/css/map.css"/>
+{% endblock %}
 {% block body %}
+
     <div>
         <h2>Welcome to Hoops!</h2>
         <p>info about the web app!</p>
@@ -14,12 +17,19 @@
           <button>Create an Account</button>
         </a>
     </div>
-
   <div>
-    <h1>insert Google maps here</h1>
-    <a href="/games">
-      <button> search for games</button>
-  </a>
-  </div>
-
+    <div>
+      <form action="/games/{{ zip_code }}" method="get">
+        <label for="zip-code">Enter your zip code:</label>
+        <input type="text" id="zip-code" name="zip_code">
+        <button type="submit">Search for games</button>
+      </form>
+  <div>
+  
+  <div id="homepage-map"> </div>
+  <script src="/static/js/homepage_map.js"></script>
+  <script
+    async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvoBvzdSj6ArBejaad94f7ibiV5L3BNqE&callback=initMap">
+  </script>
 {% endblock %}
