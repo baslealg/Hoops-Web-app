@@ -1,10 +1,19 @@
 function initMap() {
 
-    const gamesMap = new google.maps.Map(document.querySelector('#games-map'), {
-      center: {lat: 37.0902, lng: -95.7129}, 
-    zoom: 4
+    let geocoder = new google.maps.Geocoder();
+    let zip_addy = "10001";
+    geocoder.geocode({ 'address': zip_addy }, function(results, status) {
+    if (status == 'OK') {
+      let latitude = results[0].geometry.location.lat();
+      let longitude = results[0].geometry.location.lng();
+      let gamesMap = new google.maps.Map(document.getElementById('games-map'), {
+        zoom: 10,
+        center: {lat: latitude, lng: longitude}
     });
-  
+  } else {
+    alert('Geocode was not successful for the following reason: ' + status);
+  }
+});
     fetch('/api/locations')
     .then(response => response.json())
     .then(data => {
@@ -17,5 +26,4 @@ function initMap() {
         });
       });
     })
-  
-   }
+  }
