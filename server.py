@@ -11,10 +11,18 @@ app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def homepage():
     """View homepage."""
-    return render_template('homepage.html')
+    error =''
+    if request.method == 'POST':
+        zipcode = request.form['zip_code']
+        if not crud.is_valid_city(zipcode):
+            error = "Not a valid zipcode"
+        else:
+            session['zipcode'] = zipcode
+            return redirect('/games')
+    return render_template('homepage.html', error=error)
 
 @app.route('/games')
 def games_page():
@@ -67,11 +75,16 @@ def create_game():
         iso_string = request.form['date_time']
         date_time = datetime.fromisoformat(iso_string)
         max_players = request.form['max_players']
-        user = model.User.query.get(session['logged_in_user'])
-        print('***********************************************************************', date_time)
-        game =crud.create_game(game_title=game_title, date_time=date_time, max_players=max_players, user=user)
-        # alert = "Game created successfully!"
-        return redirect('/dashboard')
+        location = request.form['location']
+        if crud.is_valid_city(location):
+            lat, lng = crud.location_lat_long(location)
+            user = model.User.query.get(session['logged_in_user'])
+            print('***********************************************************************', date_time)
+            game =crud.create_game(game_title=game_title, date_time=date_time, max_players=max_players, user=user)
+            location_game = crud.create_location(game=game, address=location, latitude=lat, longitude=lng)
+            user_game = crud.create_usergame(game=game, user=user)
+            # alert = "Game created successfully!"
+            return redirect('/dashboard')
     else:
         return render_template('create_game.html')
     
@@ -101,6 +114,10 @@ def get_locations():
         locations_list.append(location_dict)
     return jsonify(locations_list)
 
+
+@app.route('/api/zipcode')
+def get_zipcode():
+    return jsonify({'zipcode': session['zipcode']})
 
 if __name__ == "__main__":
     connect_to_db(app)

@@ -56,8 +56,7 @@ all_test_games = model.Game.query.all()
 all_test_users = model.User.query.all()
 usergames_in_db = []
 for game in all_test_games:
-    for user in all_test_users:
-        db_usergame = crud.Usergame(game=game, user=user)
+        db_usergame = crud.Usergame(game=game, user= game.user)
         usergames_in_db.append(db_usergame)
 model.db.session.add_all(usergames_in_db)
 model.db.session.commit()

@@ -18,18 +18,19 @@
         </a>
     </div>
   <div>
+    {% if error != '' %}
+    <div class="alert alert-danger" role="alert">{{ error }}</div>
+  {% endif %}
     <div>
-      <form action="/games/zip_code " method="get">
-        <label for="zip-code">Enter your zip code:</label>
-        <input type="text" id="zip-code" name="zip_code">
-        <button type="submit">Search for games</button>
-      </form>
-  <div>
-  
+      <form method="post">
+      <div class="form-group">
+      <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Enter zipcode">
+    <button type="submit" class="btn btn-primary">Search Games</button>
+  </form>
   <div id="homepage-map"> </div>
   <script src="/static/js/homepage_map.js"></script>
   <script
     async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvoBvzdSj6ArBejaad94f7ibiV5L3BNqE&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDtAC7rkZ9DvBnH11OuCR70ctOlkGZaLzU&callback=initMap">
   </script>
 {% endblock %}

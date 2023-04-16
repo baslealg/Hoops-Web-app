@@ -1,5 +1,9 @@
 from model import db, User, Location, Game, Usergame, connect_to_db
 from flask import jsonify
+import re
+import googlemaps
+
+gmaps = googlemaps.Client(key='AIzaSyDtAC7rkZ9DvBnH11OuCR70ctOlkGZaLzU')
 
 def create_user(username, password):
     """Create and return a new user."""
@@ -37,7 +41,8 @@ def create_usergame(game, user):
 def create_location(game, address, latitude, longitude):
     """Create and return a location."""
     location = Location(game=game, address=address, latitude=latitude, longitude=longitude)
-
+    db.session.add(location)
+    db.session.commit()
     return location
 
 
@@ -45,6 +50,16 @@ def get_num_players(game_id):
     num_players = db.session.query(Usergame).filter_by(game_id=game_id).count()
     return num_players
 
+
+def is_valid_city(city):
+    result = gmaps.geocode(city)
+    return bool(result)
+
+def location_lat_long(location):
+    result = gmaps.geocode(location)
+    lat = result[0]['geometry']['location']['lat']
+    lng = result[0]['geometry']['location']['lng']
+    return lat, lng
 
 if __name__ == '__main__':
     from server import app
