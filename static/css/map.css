@@ -6,3 +6,34 @@
   width: 500px;
   height: 500px;
 }
+.game-item {
+  display: flex;
+  align-items: center;
+}
+
+.game-toggle {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.game-title {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.game-info {
+  display: none;
+  margin-left: 20px;
+}
+
+.game-toggle.active {
+  transform: rotate(90deg);
+}
+
+.game-toggle.active + .game-title {
+  font-weight: bold;
+}
+
+.game-toggle.active + .game-title + .game-info {
+  display: block;
+}

@@ -3,33 +3,45 @@
 {% block title %}Hoops{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="/static/css/map.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-lzo3pP/vtdZ5i5l5f5gNUuIf7VMBnlJyHNO7rqzKK+mTVaA9XzWe2xrE67DXVnLa/V0JwC20epTQI6QdU6j/Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 {% block body %}
     <div>
-        <h1>insert Google maps here</h1>
+      <div>
+        <form method="post">
+        <div class="form-group">
+        <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Enter zip code or city" required>
+      <button type="submit" class="btn btn-primary" >Search Games</button>
     </div>
-    <div>
-        <h2>Games in your area </h2>
-        <ul>
+      <div id="games-map"> </div>
+      <div>
+        <h2>Games in your area</h2>
+        <div>
+          <ul>
             {% for game in games %}
-              <li>Game Title: {{ game.game_title }}</li>
-                <ul>
-                  <li>Game Time: {{ game.date_time.strftime("%A, %b %d  %I:%M%p") }}</li>
-                  <li>Max players: {{ game.max_players }} / {{ games_num_players[game.game_id]}}</li>
-                  <li>Hosted by: {{ game.user.username }}</li>
-                  <li>{{ games_num_players}}</li>
-                  <li>Location: {{ game.location.address}}</li>
-                  <li>
-                    <button> 
-                      <a href="{{ url_for('join_game', game_id=game.game_id) }}">Join Game </a>
-                    </button>
-                  </li>
-                </ul>
+              <li class="game-item">
+                <i class="fas fa-chevron-right game-toggle"></i>
+                <span class="game-title">{{ game.game_title }}</span>
+                <div class="game-info">
+                  <ul>
+                    <li>Game Time: {{ game.date_time.strftime("%A, %b %d  %I:%M%p") }}</li>
+                    <li>Max players: {{ game.max_players }} / {{ games_num_players[game.game_id]}}</li>
+                    <li>Hosted by: {{ game.user.username }}</li>
+                    <li>{{ games_num_players}}</li>
+                    <li>Location: {{ game.location.address}}</li>
+                    <li>
+                      <button> 
+                        <a href="{{ url_for('join_game', game_id=game.game_id) }}">Join Game </a>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </li>
             {% endfor %}
           </ul>
-    </div>
-
-    <div id="games-map"> </div>
+        </div>
+      </div>
+      
     <script src="/static/js/games_map.js"></script>
     <script
       async

@@ -18,15 +18,21 @@ def homepage():
     if request.method == 'POST':
         zipcode = request.form['zip_code']
         if not crud.is_valid_city(zipcode):
-            error = "Not a valid zipcode"
+            flash("Not a valid zipcode", error)
         else:
             session['zipcode'] = zipcode
             return redirect('/games')
-    return render_template('homepage.html', error=error)
+    return render_template('homepage.html')
 
-@app.route('/games')
+@app.route('/games', methods=['GET', 'POST'])
 def games_page():
-    games = crud.get_games()
+    if request.method == 'POST':
+        zipcode = request.form['zip_code']
+        if not crud.is_valid_city(zipcode):
+            flash("Not a valid zipcode or city")
+        else:
+            session['zipcode'] = zipcode
+    games = crud.get_games(session['zipcode'])
     games_num_players = {}
     for game in games:
         games_num_players[game.game_id] = crud.get_num_players(game.game_id)
@@ -39,14 +45,13 @@ def create_account():
         password = request.form['password']
         user = crud.create_user(username=username, password=password)
         session['logged_in_user'] = user.user_id
-        # alert = "Account created successfully!"
+        flash("Account created successfully!")
         return redirect('/dashboard')
     else:
         return render_template('create_account.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = ''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -55,12 +60,13 @@ def login():
 
         if user:
             session['logged_in_user'] = user.user_id
+            flash('succesfully logged in!')
             return redirect('/dashboard')
         else:
-            error = "Incorrect email or password. Please try again."
+            flash('Incorrect username or password')
 
 
-    return render_template('login.html', error=error)
+    return render_template('login.html',)
 
 @app.route('/dashboard')
 def dashboard():
@@ -83,8 +89,11 @@ def create_game():
             game =crud.create_game(game_title=game_title, date_time=date_time, max_players=max_players, user=user)
             location_game = crud.create_location(game=game, address=location, latitude=lat, longitude=lng)
             user_game = crud.create_usergame(game=game, user=user)
-            # alert = "Game created successfully!"
+            flash('Successfully created a game!')
             return redirect('/dashboard')
+        else:
+           flash('Invalid Location', 'error')
+           return render_template('create_game.html') 
     else:
         return render_template('create_game.html')
     
@@ -92,11 +101,13 @@ def create_game():
 @app.route('/join_game/<game_id>')
 def join_game(game_id):
     if 'logged_in_user' not in session:
+        flash('Please log in or create an account')
         return redirect('/login')
     else:
         user = model.User.query.get(session['logged_in_user'])
         game = model.Game.query.get(game_id)
         usergame = crud.create_usergame(game, user)
+        flash('Succesfully joined game!')
         return redirect('/dashboard')
 
 @app.route('/api/locations')
@@ -118,6 +129,12 @@ def get_locations():
 @app.route('/api/zipcode')
 def get_zipcode():
     return jsonify({'zipcode': session['zipcode']})
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in_user', None)
+    flash('Succesfully Logged Out')
+    return redirect('/')
 
 if __name__ == "__main__":
     connect_to_db(app)

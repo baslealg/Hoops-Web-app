@@ -2,7 +2,7 @@ from model import db, User, Location, Game, Usergame, connect_to_db
 from flask import jsonify
 import re
 import googlemaps
-
+from datetime import datetime
 gmaps = googlemaps.Client(key='AIzaSyDtAC7rkZ9DvBnH11OuCR70ctOlkGZaLzU')
 
 def create_user(username, password):
@@ -24,10 +24,26 @@ def create_game(game_title, date_time, max_players, user):
 
     return game
 
-"""currently this function gets all games but once google maps incorped it will get games by zipcode"""
-def get_games():
+def get_games(zipcode):
+    games_within_radius = []
+    lat, lng = location_lat_long(zipcode)
     all_games = Game.query.all()
-    return all_games
+    for game in all_games:
+        game_lat = game.location.latitude
+        game_lng = game.location.longitude
+    
+    
+        distance_matrix_result = gmaps.distance_matrix(origins=[(lat, lng)],
+                                                   destinations=[(game_lat, game_lng)],
+                                                   mode='driving',
+                                                   units='imperial',
+                                                   departure_time=datetime.now())
+    
+        if distance_matrix_result['rows'][0]['elements'][0]['distance']['value'] <= 16093.4:
+            games_within_radius.append(game)
+
+
+    return games_within_radius
 
 def create_usergame(game, user):
     """Create and return a new usergame."""
@@ -57,6 +73,7 @@ def is_valid_city(city):
 
 def location_lat_long(location):
     result = gmaps.geocode(location)
+    print(result)
     lat = result[0]['geometry']['location']['lat']
     lng = result[0]['geometry']['location']['lng']
     return lat, lng

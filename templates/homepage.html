@@ -17,15 +17,11 @@
           <button>Create an Account</button>
         </a>
     </div>
-  <div>
-    {% if error != '' %}
-    <div class="alert alert-danger" role="alert">{{ error }}</div>
-  {% endif %}
-    <div>
       <form method="post">
       <div class="form-group">
-      <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Enter zipcode">
-    <button type="submit" class="btn btn-primary">Search Games</button>
+      <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Enter zip code or city" required>
+    <button type="submit" class="btn btn-primary" >Search Games</button>
+  </div>
   </form>
   <div id="homepage-map"> </div>
   <script src="/static/js/homepage_map.js"></script>
