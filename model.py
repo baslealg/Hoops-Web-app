@@ -11,7 +11,7 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-
+    phone_number = db.Column(db.String, unique=True)
     usergames = db.relationship("Usergame", back_populates="user")
     games = db.relationship("Game", back_populates="user")
 

@@ -7,16 +7,34 @@
         <h2>Dashboard</h2>
     </div>
     <div>
-        <a href="/create_game">
-            <button>create a game</button>
-        </a>
+        <button id="show-form-button">Create Game</button>
+        <div id="form-container" style="display: none;" >
+            <form method="POST" action="{{ url_for('create_game') }}">
+                <label for="game_title">game title:</label>
+                <input type="text" id="game_title" name="game_title" required>
+                <br>
+                <label for="date_time">date and time:</label>
+                <input type="datetime-local" id="date_time" name="date_time" required>
+                <br>
+                <label for="location">location:</label>
+                <input type="text" id="location" name="location" required>
+                <br>
+                <label for="max_players">max players:</label>
+                <input type="number" id="max_players" name="max_players" required>
+                <br>
+                <input type="submit" value="submit">
+            </form>
+        </div>
     </div>
     <div>
         <h2>current games your in </h2>
+        
         {% if user.usergames %}
             <ul>
                 {% for usergame in user.usergames %}
-                <li>Game Title: {{ usergame.game.game_title }}</li>
+                <div>
+                <button class="show-game-button">{{ usergame.game.game_title }}</button>
+                <div class="game-info-container" style="display: none;" >
                     <ul>
                     <li>Game Time: {{usergame.game.date_time.strftime("%A, %b %d  %I:%M%p") }}</li>
                     <li>Max players: {{usergame.game.max_players }}</li>
@@ -27,7 +45,11 @@
                     {% endif %}
                     <li>Location: {{ usergame.game.location.address}}</li>
                     </ul>
+                </div>
+            </div>
                 {% endfor %}
+                </ul>
+    </div>
         {% else %}
                 <p>you are not in any games at the moment</p>
         {% endif %}
@@ -41,5 +63,8 @@
         <form action="/logout">
             <input type="submit" value="Logout">
           </form>
+    </div>
+    <div>
+        <script src="/static/js/dashboard.js"></script>
     </div>
 {% endblock %}

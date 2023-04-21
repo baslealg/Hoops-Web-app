@@ -6,6 +6,7 @@ import crud
 from flask import Flask
 from jinja2 import StrictUndefined
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.secret_key = "dev"
@@ -14,7 +15,8 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/', methods=['GET', 'POST'])
 def homepage():
     """View homepage."""
-    error =''
+    google_maps_api_key = os.environ.get('GOOGLE_MAPS_AUTH_TOKEN')
+    session['zipcode'] = 10001
     if request.method == 'POST':
         zipcode = request.form['zip_code']
         if not crud.is_valid_city(zipcode):
@@ -22,10 +24,11 @@ def homepage():
         else:
             session['zipcode'] = zipcode
             return redirect('/games')
-    return render_template('homepage.html')
+    return render_template('homepage.html', google_maps_api_key=google_maps_api_key)
 
 @app.route('/games', methods=['GET', 'POST'])
 def games_page():
+    google_maps_api_key = os.environ.get('GOOGLE_MAPS_AUTH_TOKEN')
     if request.method == 'POST':
         zipcode = request.form['zip_code']
         if not crud.is_valid_city(zipcode):
@@ -36,20 +39,25 @@ def games_page():
     games_num_players = {}
     for game in games:
         games_num_players[game.game_id] = crud.get_num_players(game.game_id)
-    return render_template('games.html', games=games, games_num_players= games_num_players)
+    return render_template('games.html', games=games, games_num_players= games_num_players, google_maps_api_key=google_maps_api_key)
 
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = crud.create_user(username=username, password=password)
-        session['logged_in_user'] = user.user_id
-        flash("Account created successfully!")
-        return redirect('/dashboard')
+        phone_number = request.form['phone_number']
+        if crud. is_valid_phone_number(phone_number):
+            crud.send_welcome_message(phone_number)
+            user = crud.create_user(username=username, password=password, phone_number=phone_number)
+            session['logged_in_user'] = user.user_id
+            flash("Account created successfully!")
+            return redirect('/dashboard')
+        else:
+            flash('Please enter a valid phone number')
+            return render_template('create_account.html')
     else:
         return render_template('create_account.html')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -107,6 +115,10 @@ def join_game(game_id):
         user = model.User.query.get(session['logged_in_user'])
         game = model.Game.query.get(game_id)
         usergame = crud.create_usergame(game, user)
+        phone_number = int(user.phone_number)
+        game_title = game.game_title
+        game_time = game.date_time
+        crud.send_join_game_message(game_title=game_title, game_time=game_time, phone_number=phone_number)
         flash('Succesfully joined game!')
         return redirect('/dashboard')
 
@@ -128,7 +140,8 @@ def get_locations():
 
 @app.route('/api/zipcode')
 def get_zipcode():
-    return jsonify({'zipcode': session['zipcode']})
+    if session['zipcode']:
+        return jsonify({'zipcode': session['zipcode']})
 
 @app.route('/logout')
 def logout():
