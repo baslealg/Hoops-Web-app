@@ -7,10 +7,12 @@ from flask import Flask
 from jinja2 import StrictUndefined
 from datetime import datetime
 import os
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
+socketio = SocketIO(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def homepage():
@@ -43,6 +45,9 @@ def games_page():
 
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
+    if 'logged_in_user' in session:
+        flash('Already Logged in')
+        return redirect('/dashboard')
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -60,6 +65,9 @@ def create_account():
         return render_template('create_account.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'logged_in_user' in session:
+        flash('Already Logged in')
+        return redirect('/dashboard')
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -115,10 +123,11 @@ def join_game(game_id):
         user = model.User.query.get(session['logged_in_user'])
         game = model.Game.query.get(game_id)
         usergame = crud.create_usergame(game, user)
-        phone_number = int(user.phone_number)
         game_title = game.game_title
         game_time = game.date_time
-        crud.send_join_game_message(game_title=game_title, game_time=game_time, phone_number=phone_number)
+        if user.phone_number:
+            phone_number = int(user.phone_number)
+            crud.send_join_game_message(game_title=game_title, game_time=game_time, phone_number=phone_number)
         flash('Succesfully joined game!')
         return redirect('/dashboard')
 
@@ -148,6 +157,36 @@ def logout():
     session.pop('logged_in_user', None)
     flash('Succesfully Logged Out')
     return redirect('/')
+
+@app.route('/games/delete', methods=['POST'])
+def delete_game():
+    game_id = request.form.get('game_id')
+    game = model.Game.query.get(game_id) 
+    print(game)
+    usergames= model.Usergame.query.filter_by(game_id = game_id).all()
+    print(usergames, "*************************************************************************")
+    db.session.delete(game)
+    for usergame in usergames:
+        db.session.delete(usergame)
+
+    db.session.commit()
+    flash('game succesfully deleted')
+    return redirect('/dashboard')
+
+@socketio.on('join')
+def on_join(data):
+    username = data['username']
+    room = data['room']
+    join_room(room)
+    socketio.emit('join_message', f'{username} has joined the room {room}.', room=room)
+@socketio.on('message')
+def handle_message(data):
+    username = data['username']
+    room = data['room']
+    message = data['message']
+    socketio.emit('message', {'username': username, 'message': message}, room=room)
+
+
 
 if __name__ == "__main__":
     connect_to_db(app)

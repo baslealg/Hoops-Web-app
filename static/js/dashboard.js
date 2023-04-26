@@ -23,3 +23,12 @@ buttons.forEach(button => {
     }
   });
 });
+
+var deleteForm = document.getElementById("delete-form");
+var deleteButton = document.getElementById("delete-button");
+
+deleteButton.addEventListener("click", function(event) {
+  if (!confirm("Are you sure you want to delete this game?")) {
+    event.preventDefault();
+  }
+});

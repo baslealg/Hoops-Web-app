@@ -45,6 +45,12 @@
                     {% endif %}
                     <li>Location: {{ usergame.game.location.address}}</li>
                     </ul>
+                    {% if usergame.game.host_id == usergame.user.user_id %}                    
+                    <form action="{{ url_for('delete_game') }}" method="post" id="delete-form">
+                        <input type="hidden" name="game_id" value="{{ usergame.game.game_id }}">
+                        <button type="submit" class="btn btn-danger" id="delete-button">Delete Game</button>
+                      </form>
+                    {% endif %}
                 </div>
             </div>
                 {% endfor %}

@@ -48,7 +48,7 @@ class Usergame(db.Model):
     user = db.relationship("User", back_populates="usergames")
 
     def __repr__(self):
-            return f'<Usergame usergame_id={self.rating_id}>'
+            return f'<Usergame usergame_id={self.usergame_id} game_id={self.game_id} user_id={self.user_id}>'
 
 class Location(db.Model):
     """A location."""
