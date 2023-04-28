@@ -5,6 +5,8 @@ import googlemaps
 from datetime import datetime
 from twilio.rest import Client
 import os
+from flask_socketio import emit
+
 google_maps_api_key = os.environ.get('GOOGLE_MAPS_AUTH_TOKEN')
 account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
 auth_token = os.environ.get('TWILIO_AUTH_TOKEN')

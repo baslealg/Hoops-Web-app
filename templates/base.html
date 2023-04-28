@@ -10,6 +10,19 @@
     {% block head %}{% endblock %}
   </head>
   <body>
+    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+      <div>
+        <a href="/" style="margin-right: 10px;">Home</a>
+        <a href="/games" style="margin-right: 10px;">Search Games</a>
+      </div>
+      <div>
+        {% if "logged_in_user" in session %}
+          <a href="/dashboard" style="margin-right: 10px;">Dashboard</a>
+        {% else %}
+          <a href="/login" style="margin-right: 10px;">Login</a>
+        {% endif %}
+      </div>
+    </nav>
     {% for msg in get_flashed_messages() %}
       <p class="flash-msg">
         {{ msg }}

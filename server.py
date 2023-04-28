@@ -9,10 +9,15 @@ from datetime import datetime
 import os
 from flask_socketio import SocketIO
 
+
+
+
 app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
-socketio = SocketIO(app)
+socketio = SocketIO()
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 def homepage():
@@ -173,21 +178,8 @@ def delete_game():
     flash('game succesfully deleted')
     return redirect('/dashboard')
 
-@socketio.on('join')
-def on_join(data):
-    username = data['username']
-    room = data['room']
-    join_room(room)
-    socketio.emit('join_message', f'{username} has joined the room {room}.', room=room)
-@socketio.on('message')
-def handle_message(data):
-    username = data['username']
-    room = data['room']
-    message = data['message']
-    socketio.emit('message', {'username': username, 'message': message}, room=room)
-
-
 
 if __name__ == "__main__":
     connect_to_db(app)
-    app.run(host="0.0.0.0", debug=True)
+    socketio.init_app(app)
+    socketio.run(app, host="0.0.0.0", debug=True)
