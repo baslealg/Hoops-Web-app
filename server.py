@@ -1,13 +1,13 @@
 from flask import (Flask, render_template, request, flash, session,
                    redirect, jsonify)
 from model import connect_to_db, db
-import model
-import crud
+import model as model
+import crud as crud
 from flask import Flask
 from jinja2 import StrictUndefined
 from datetime import datetime
 import os
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 
 
 
@@ -178,8 +178,37 @@ def delete_game():
     flash('game succesfully deleted')
     return redirect('/dashboard')
 
+users = {}
+
+@socketio.on("connect")
+def handle_connect():
+    print('___________________________________________________________'
+    )
+    print("Client connected!")
+    print('___________________________________________________________'
+    )
+
+@socketio.on("user_join")
+def handle_user_join():
+    user_id = session.get('logged_in_user')
+    username_object= model.User.query.get(user_id)
+    username = username_object.username 
+    if username:
+        print(f"User {username} joined!")
+        users[username] = request.sid
+
+
+@socketio.on("new_message")
+def handle_new_message(message):
+    print(f"New message: {message} username: {users}")
+    username = None 
+    for user in users:
+        if users[user] == request.sid:
+            username = user
+    emit("chat", {"message": message, "username": username}, broadcast=True)
+
 
 if __name__ == "__main__":
     connect_to_db(app)
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
     socketio.run(app, host="0.0.0.0", debug=True)

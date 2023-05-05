@@ -3,9 +3,9 @@ import json
 from random import choice, randint
 from datetime import datetime
 
-import crud
-import model
-import server
+import crud as crud
+import model as model
+import server as server
 
 
 os.system('dropdb hoops')

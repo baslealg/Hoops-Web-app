@@ -3,14 +3,24 @@
 {% block title %}Hoops{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="/static/css/map.css"/>
+<link rel="stylesheet" href="/static/css/games.css"/>
+
 {% endblock %}
 {% block body %}
     <div>
       <div>
         <form method="post">
-        <div class="form-group">
-        <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Enter zip code or city"required>
-      <button type="submit" class="btn btn-primary" >Search Games</button>
+          <div class="form-group">
+            <div class="input-group">
+              <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Enter zip code or city" required>
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-search"></i> Search Games
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
     </div>
       <div id="games-map"> </div>
       <div>
@@ -27,11 +37,9 @@
                     <li>Hosted by: {{ game.user.username }}</li>
                     <li>{{ games_num_players}}</li>
                     <li>Location: {{ game.location.address}}</li>
-                    <li>
-                      <button> 
-                        <a href="{{ url_for('join_game', game_id=game.game_id) }}">Join Game </a>
+                      <button class="btn btn-primary"> 
+                        <a href="{{ url_for('join_game', game_id=game.game_id) }}"> <i class="bi bi-plus-circle-fill"></i> Join Game </a>
                       </button>
-                    </li>
                   </ul>
                 </div>
               </li>

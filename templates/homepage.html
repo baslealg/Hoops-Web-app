@@ -1,32 +1,61 @@
+
 {% extends 'base.html' %}
 
 {% block title %}Hoops{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="/static/css/map.css"/>
+<link rel="stylesheet" href="/static/css/homepage.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
 {% endblock %}
 {% block body %}
-
-    <div>
-        <h2>Welcome to Hoops!</h2>
-        <p>info about the web app!</p>
-        <a href="/login">
-          <button>Login</button>
-        </a>
-        <br>
-        <a href="/create_account">
-          <button>Create an Account</button>
-        </a>
-    </div>
-      <form method="post">
-      <div class="form-group">
-      <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Enter zip code or city" required>
-    <button type="submit" class="btn btn-primary" >Search Games</button>
+<div class="hero">
+  <h1>Hoops🏀</h1>
+  <h2> The ultimate pickup basketball companion! </h2>
+  <p>Tired of showing up to empty courts or missing out on exciting 
+    games happening just around the corner? Hoops is here to change the game for you.</p>
+  <div class="text-center">
+    <a href="/login">
+      <button class="btn">Login</button>
+    </a>
+    <br>
+    <a href="/create_account">
+      <button class="btn">Create an Account</button>
+    </a>
   </div>
+</div>
+<div class="container">
+  <div id='homepage_info'>
+    <h5>With Hoops, you can:</h5>
+    <p>📍 Find nearby pickup games happening in real-time</p>
+    <p>📅 Schedule games and invite friends or local players</p>
+    <p>👥 Connect with fellow basketball lovers and grow your <br> network</p>
+    <p>💬 Instantly chat with teammates and opponents, discussing <br>strategies or sharing game highlights</p>
+    
+    <p>Whether you're a seasoned player or just looking for a fun way to stay active, Hoops 
+      brings the action right to your fingertips. Join the Hoops community today and never miss 
+      a chance to hit the court again. Get ready to shoot some hoops and make new friends along 
+      the way. Let the games begin!</p>
+  </div>
+
+  <form method="post">
+    <div class="form-group">
+      <div class="input-group">
+        <input type="text" class="form-control" id="zip_code" name="zip_code" placeholder="Enter zip code or city" required>
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> Search Games
+          </button>
+        </div>
+      </div>
+    </div>
   </form>
+  
   <div id="homepage-map"> </div>
-  <script src="/static/js/homepage_map.js"></script>
-  <script
-    async
-    src="https://maps.googleapis.com/maps/api/js?key={{google_maps_api_key}}&callback=initMap">
-  </script>
+</div>
+<script src="/static/js/homepage_map.js"></script>
+<script
+  async
+  src="https://maps.googleapis.com/maps/api/js?key={{google_maps_api_key}}&callback=initMap">
+</script>
 {% endblock %}
