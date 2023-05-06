@@ -21,4 +21,4 @@ I Google Maps API for location-based search, Twilio API for text message notific
 * React.js
 * Socket.IO!
 
-[Hoops-Homepage](https://user-images.githubusercontent.com/60019036/236644590-5c0ced48-ead8-46b5-bbeb-dc343b3584cc.PNG)
+![Hoops-Homepage](https://user-images.githubusercontent.com/60019036/236644590-5c0ced48-ead8-46b5-bbeb-dc343b3584cc.PNG)
